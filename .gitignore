@@ -1,0 +1,5 @@
+
+!docker/mongo/db/.gitignore
+docker/mongo/db/*
+
+.vscode
