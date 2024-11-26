@@ -3,23 +3,34 @@
 namespace App\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ODM\Document]
 class Post
 {
     #[ODM\Id(strategy: "INCREMENT")]
+    #[Groups(['post:read', 'post:list'])]
     private ?int $id = null;
 
     #[ODM\Field(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
+    #[Groups(['post:read', 'post:list', 'post:write'])]
     private ?string $title = null;
 
     #[ODM\Field(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 100, max: 300)]
+    #[Groups(['post:read', 'post:write'])]
     private ?string $content = null;
 
     #[ODM\Field(type: 'date')]
+    #[Groups(['post:read', 'post:list'])]
     private \DateTime $createdAt;
 
     #[ODM\ReferenceOne(targetDocument: User::class, inversedBy: 'posts')]
+    #[Groups(['post:read', 'post:list'])]
     private ?User $owner = null;
 
     public function __construct()
@@ -59,6 +70,7 @@ class Post
         return $this->createdAt;
     }
 
+    #[Groups(['post:read', 'post:list'])]
     public function getUsername(): ?string
     {
         return $this->owner?->getName();

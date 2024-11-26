@@ -6,26 +6,42 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ODM\Document]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ODM\Id(strategy: "INCREMENT")]
+    #[Groups(['user:read', 'user:list', 'post:read', 'post:list'])]
     private ?int $id = null;
 
     #[ODM\Field(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 50)]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $name = null;
 
     #[ODM\Field(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $email = null;
 
     #[ODM\Field(type: 'collection')]
+    #[Assert\NotBlank]
+    #[Assert\Choice(
+        choices: ['ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'],
+        multiple: true
+    )]
+    #[Groups(['user:read', 'user:write'])]
     private array $roles = [];
 
     #[ODM\Field(type: 'string')]
+    #[Assert\NotBlank]
     private ?string $password = null;
 
-    #[ODM\ReferenceMany(targetDocument: Post::class, mappedBy: 'user')]
+    #[ODM\ReferenceMany(targetDocument: Post::class, mappedBy: 'owner')]
     private ArrayCollection $posts;
 
     public function __construct()
