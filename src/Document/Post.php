@@ -16,12 +16,22 @@ class Post
     #[ODM\Field(type: 'string')]
     #[Assert\NotBlank]
     #[Assert\Length(max: 100)]
+    #[Assert\Regex(
+        pattern: "/<script/i",
+        match: false,
+        message: "Balise javascript non permise!"
+    )]
     #[Groups(['post:read', 'post:list', 'post:write'])]
     private ?string $title = null;
 
     #[ODM\Field(type: 'string')]
     #[Assert\NotBlank]
     #[Assert\Length(min: 10, max: 3000)]
+    #[Assert\Regex(
+        pattern: "/<script/i",
+        match: false,
+        message: "Balise javascript non permise!"
+    )]
     #[Groups(['post:read', 'post:write'])]
     private ?string $content = null;
 
