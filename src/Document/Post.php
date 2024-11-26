@@ -19,7 +19,7 @@ class Post
     #[ODM\Field(type: 'date')]
     private \DateTime $createdAt;
 
-    #[ODM\ReferenceOne(targetDocument: User::class, inversedBy: 'articles')]
+    #[ODM\ReferenceOne(targetDocument: User::class, inversedBy: 'posts')]
     private ?User $owner = null;
 
     public function __construct()
