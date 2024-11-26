@@ -21,7 +21,7 @@ class Post
 
     #[ODM\Field(type: 'string')]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 100, max: 300)]
+    #[Assert\Length(min: 10, max: 3000)]
     #[Groups(['post:read', 'post:write'])]
     private ?string $content = null;
 

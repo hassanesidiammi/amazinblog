@@ -13,13 +13,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ODM\Id(strategy: "INCREMENT")]
-    #[Groups(['user:read', 'user:list', 'post:read', 'post:list'])]
+    #[Groups(['user:read', 'user:list', 'post:read', 'post:read', 'post:list'])]
     private ?int $id = null;
 
     #[ODM\Field(type: 'string')]
     #[Assert\NotBlank]
     #[Assert\Length(max: 50)]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:read', 'user:write', 'post:read', 'post:list'])]
     private ?string $name = null;
 
     #[ODM\Field(type: 'string')]
