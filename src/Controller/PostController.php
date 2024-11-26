@@ -9,33 +9,17 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/posts', name: 'api_post')]
 class PostController extends AbstractController
 {
+    use ViolationTrait;
 
     public function __construct(private DocumentManager $dm, private SerializerInterface $serializer) {}
-
-    #[Route('/adduser', name: 'api_login', methods: ['GET'])]
-    public function createUser(UserPasswordHasherInterface $hasher): JsonResponse
-    {
-        $user = new User();
-        $user->setName('toto');
-        $user->setEmail('toto@test.com');
-        $user->setPassword($hasher->hashPassword($user, '123456'));
-
-        $this->dm->persist($user);
-        $this->dm->flush();
-
-        return new JsonResponse(['message' => 'Login successful']);
-    }
-
-
 
     #[Route('/', name: '_list', methods: ['GET'])]
     public function index(Request $request, PostRepository $postRepository): JsonResponse
@@ -95,12 +79,14 @@ class PostController extends AbstractController
     }
 
     #[Route('/{id}', name: '_get', methods: ['GET'])]
+    #[IsGranted('view', 'post')]
     public function show(Post $post): JsonResponse
     {
         return $this->json($post, JsonResponse::HTTP_OK, [], ['groups' => ['post:read']]);
     }
 
     #[Route('/{id}', name: '_update', methods: ['PUT'])]
+    #[IsGranted('edit', 'post')]
     public function update(Post $post, Request $request, ValidatorInterface $validator): JsonResponse
     {
         $this->serializer->deserialize(
@@ -126,13 +112,13 @@ class PostController extends AbstractController
         );
     }
 
-    private function jsonViolation($errors, $code = JsonResponse::HTTP_BAD_REQUEST)
+    #[Route('/{id}', name: '_delete', methods: ['DELETE'])]
+    #[IsGranted('delete', 'post')]
+    public function delete(Post $post): JsonResponse
     {
-        $formattedErrors = array_map(fn($violation) => [
-            'field' => $violation->getPropertyPath(),
-            'message' => $violation->getMessage(),
-        ], iterator_to_array($errors));
+        $this->dm->remove($post);
+        $this->dm->flush();
 
-        return $this->json(['errors' => $formattedErrors], $code);
+        return $this->json(['message' => 'Post "" successfully deleted'], JsonResponse::HTTP_NO_CONTENT);
     }
 }
