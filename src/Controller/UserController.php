@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use ViolationTrait;
 
-#[Route('/api', name: 'api_post')]
+#[Route('/api', name: 'api_user_profile')]
 class UserController extends AbstractController
 {
     use ControllerViolationTrait;
@@ -23,14 +23,17 @@ class UserController extends AbstractController
     public function __construct(private DocumentManager $dm, private SerializerInterface $serializer) {}
 
     #[Route('/profile', name: '_profile', methods: ['GET'])]
-    public function profile(User $user): JsonResponse
+    public function profile(): JsonResponse
     {
+        $user = $this->getUser();
+
         return $this->json($user, JsonResponse::HTTP_OK, [], ['groups' => ['user:read']]);
     }
 
     #[Route('/profile', name: '_update', methods: ['PUT'])]
-    public function update(User $user, Request $request, ValidatorInterface $validator): JsonResponse
+    public function update(Request $request, ValidatorInterface $validator): JsonResponse
     {
+        $user = $this->getUser();
         $this->serializer->deserialize(
             $request->getContent(),
             User::class,

@@ -31,7 +31,7 @@ final class PostVoter extends Voter
             case self::VIEW:
             case self::EDIT:
             case self::DELETE:
-                return $user === $subject->getOwner();
+                return $user === $subject->getAuthor();
         }
 
         return false;

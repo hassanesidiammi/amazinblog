@@ -41,7 +41,7 @@ class Post
 
     #[ODM\ReferenceOne(targetDocument: User::class, inversedBy: 'posts')]
     #[Groups(['post:read', 'post:list'])]
-    private ?User $owner = null;
+    private ?User $author = null;
 
     public function __construct()
     {
@@ -83,17 +83,17 @@ class Post
     #[Groups(['post:read', 'post:list'])]
     public function getUsername(): ?string
     {
-        return $this->owner?->getName();
+        return $this->author?->getName();
     }
 
-    public function getOwner(): ?User
+    public function getAuthor(): ?User
     {
-        return $this->owner;
+        return $this->author;
     }
 
-    public function setOwner(User $user): static
+    public function setAuthor(User $user): static
     {
-        $this->owner = $user;
+        $this->author = $user;
         $user->addPost($this);
 
         return $this;

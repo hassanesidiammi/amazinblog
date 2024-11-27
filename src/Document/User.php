@@ -41,7 +41,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Assert\NotBlank]
     private ?string $password = null;
 
-    #[ODM\ReferenceMany(targetDocument: Post::class, mappedBy: 'owner')]
+    #[ODM\ReferenceMany(targetDocument: Post::class, mappedBy: 'author')]
     private ArrayCollection $posts;
 
     public function __construct()
@@ -118,8 +118,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             $this->posts[] = $post;
         }
 
-        if ($post->getOwner() !== $this) {
-            $post->setOwner($this);
+        if ($post->getAuthor() !== $this) {
+            $post->setAuthor($this);
         }
 
         return $this;

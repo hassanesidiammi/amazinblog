@@ -17,7 +17,7 @@ class PostRepository extends ServiceDocumentRepository
     public function findPaginated(User $user, int $page = 1, ?int $limit = 10)
     {
         return $this->createQueryBuilder()
-            ->field('owner')->equals($user)
+            ->field('author')->equals($user)
             ->limit($limit)
             ->skip(($page - 1) * $limit)
             ->sort('createdAt', 'DESC')
@@ -25,10 +25,12 @@ class PostRepository extends ServiceDocumentRepository
             ->execute();
     }
 
-    public function countAll(): int
+    public function countAll(User $user): int
     {
-        return $this->getDocumentManager()
-            ->getDocumentCollection($this->getClassName())
-            ->countDocuments();
+        return $this->createQueryBuilder()
+            ->field('author')->equals($user)
+            ->count()
+            ->getQuery()
+            ->execute();
     }
 }

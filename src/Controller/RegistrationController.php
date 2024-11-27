@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Document\User;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,8 +15,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/register', name: 'register', methods: ['POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $hasher, DocumentManager $dm, SerializerInterface $serializer): Response
+    #[Route('/api/register', name: 'register', methods: ['POST'])]
+    public function register(Request $request, UserPasswordHasherInterface $hasher, DocumentManager $dm, SerializerInterface $serializer, JWTTokenManagerInterface $jwt): Response
     {
         $content = $request->getContent();
         try {
@@ -31,10 +32,13 @@ class RegistrationController extends AbstractController
         }
 
         $user->setPassword($hasher->hashPassword($user, json_decode($content, true)['password']));
+        $user->setRoles(['ROLE_EDITOR']);
 
         $dm->persist($user);
         $dm->flush();
 
-        return $this->json($user, JsonResponse::HTTP_CREATED, [], ['groups' => ['user:read']]);
+        $token = $jwt->create($user);
+
+        return $this->json(['user' => $user, 'token' => $token], JsonResponse::HTTP_CREATED, [], ['groups' => ['user:read']]);
     }
 }

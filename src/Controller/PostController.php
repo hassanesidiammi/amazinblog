@@ -28,9 +28,8 @@ class PostController extends AbstractController
         $limit = max(10, (int) $request->query->get('limit', 10));
 
         $user = $this->getUser();
-        $user = $this->dm->getRepository(User::class)->find(1);
         $posts = $postRepository->findPaginated($user, $page, $limit);
-        $total = $postRepository->countAll([]);
+        $total = $postRepository->countAll($user);
 
         return $this->json(
             [
@@ -61,11 +60,10 @@ class PostController extends AbstractController
         }
 
         $user = $this->getUser();
-        $user = $this->dm->getRepository(User::class)->find(1);
         if (!$user instanceof User) {
             return $this->json(['error' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
         }
-        $post->setOwner($user);
+        $post->setAuthor($user);
 
         $errors = $validator->validate($post);
         if (count($errors) > 0) {
