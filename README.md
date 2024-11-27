@@ -58,7 +58,7 @@ the respons contains user information and a generated token
 }
 ```
 
-## Sign In
+### Sign In
 An existing user can login and get a new token
 
 ```console
@@ -73,7 +73,7 @@ curl --request POST \
 
 ```
 
-## Create new Post
+### Create new Post
 
 ```console
 curl --request POST \
@@ -90,7 +90,21 @@ curl --request POST \
 Other actions are like that :D
 
 
-# Use the client
+## Use the client
 
+*node 20 or higher is required*
 
+```console
+git clone https://github.com/hassanesidiammi/amazinblog_client.git
+npm install
+npm start
+```
+go to http://localhost:3000/login
+and register or use an existing user to login
 
+- edito@test.com
+- 123456
+
+![amazingblog](https://github.com/user-attachments/assets/ec9b8a78-cec6-46ec-9fce-4345c16daf7e)
+
+Done!
