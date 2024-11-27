@@ -96,6 +96,7 @@ Other actions are like that :D
 
 ```console
 git clone https://github.com/hassanesidiammi/amazinblog_client.git
+cd amazinblog_client
 npm install
 npm start
 ```
