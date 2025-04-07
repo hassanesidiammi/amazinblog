@@ -13,7 +13,7 @@ security:
       security: false
 
     register:
-      pattern: ^/register
+      pattern: ^/api/register
       security: false
 
     login:
